@@ -9,4 +9,6 @@ import site.lawmate.admin.domain.model.Admin;
 @Repository
 public interface AdminRepository extends ReactiveMongoRepository<Admin, String> {
     Mono<Admin> findByUsername(String username);
+
+    Mono<Admin> findByEmail(String email);
 }

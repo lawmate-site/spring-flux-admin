@@ -1,7 +1,6 @@
 package site.lawmate.admin.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,16 +12,14 @@ import site.lawmate.admin.repository.ManageRepository;
 import site.lawmate.admin.service.ManageService;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ManageServiceImpl implements ManageService {
 
     private final ManageRepository manageRepository;
     private final LawyerStatsRepository lawyerStatsRepository;
-    private final LocalDate yesterday = LocalDate.now().minusDays(1); //
+    private final LocalDate yesterday = LocalDate.now().minusDays(1);
     @Override
     public Mono<LawyerStatsDto> countLawyersAll() {
 
@@ -56,10 +53,7 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public Mono<Long> countNewLawyers() {
-        log.info("yesterday: {}", yesterday);
-        return manageRepository.findAll()
-                .filter(lawyer -> lawyer.getCreatedDate().toLocalDate().equals(yesterday))
-                .count();
+        return manageRepository.findAll().filter(lawyer -> lawyer.getCreatedAt().toLocalDate().equals(yesterday)).count();
     }
 
     @Override
@@ -71,14 +65,13 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public void saveLawyerStats() {
-        Mono.zip(countNewLawyers(), getIncreaseRate(), countLawyersAuthFalse())
-                .flatMap(tuple -> lawyerStatsRepository.save(LawyerStats.builder()
-                        .date(yesterday)
-                        .newLawyerCount(tuple.getT1())
-                        .increaseRate(tuple.getT2())
-                        .countLawyersFalse(tuple.getT3())
-                        .build()))
-                .subscribe();
+        LawyerStats lawyerStats = LawyerStats.builder()
+                .date(yesterday)
+                .newLawyerCount(countNewLawyers().block())
+                .increaseRate(getIncreaseRate().block())
+                .countLawyersFalse(countLawyersAuthFalse().block())
+                .build();
+        lawyerStatsRepository.save(lawyerStats).subscribe();
     }
 
     @Override
@@ -91,18 +84,5 @@ public class ManageServiceImpl implements ManageService {
                 .build());
     }
 
-    @Override
-    public Flux<LawyerStatsDto> getLawyerStatsByMonth() {
-        return lawyerStatsRepository.findAll()
-                .groupBy(stats -> LocalDate.of(stats.getDate().getYear(), stats.getDate().getMonthValue(), 1))
-                .flatMap(grouped -> grouped.collectList()
-                        .map(list -> LawyerStatsDto.builder()
-                                .year(grouped.key().getYear())
-                                .month(grouped.key().getMonthValue())
-                                .newLawyerCount(list.stream().mapToLong(LawyerStats::getNewLawyerCount).sum())
-                                .increaseRate(Math.round(list.stream().mapToLong(LawyerStats::getIncreaseRate).average().orElse(0)))
-                                .build()))
-                .sort(Comparator.comparingInt(LawyerStatsDto::getYear).thenComparingInt(LawyerStatsDto::getMonth).reversed());
 
-    }
 }

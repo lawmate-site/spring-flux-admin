@@ -1,20 +1,21 @@
 package site.lawmate.admin.domain.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@Data
 @Builder
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
-public class Message {
+public class MessageDto {
 
-        private String message;
-        private String code;
-        private String status;
+    private String message;
+    private String status;
+    private String code;
 
 }

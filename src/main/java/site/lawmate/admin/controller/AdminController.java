@@ -39,11 +39,15 @@ public class AdminController {
         return ResponseEntity.ok(adminService.delete(id));
     }
 
-    @PutMapping("/enabled/{id}")
+    @PutMapping("/permit/{id}")
     public ResponseEntity<Mono<String>> permit(@PathVariable("id") String id) {
-        return ResponseEntity.ok(adminService.enabled(id));
+        return ResponseEntity.ok(adminService.permit(id));
     }
 
+    @PutMapping("/revoke/{id}")
+    public ResponseEntity<Mono<String>> revoke(@PathVariable("id") String id) {
+        return ResponseEntity.ok(adminService.revoke(id));
+    }
 
     @GetMapping("/enabled")
     public ResponseEntity<Flux<Admin>> findAllByEnabled() {

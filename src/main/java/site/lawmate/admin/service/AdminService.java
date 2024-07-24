@@ -12,7 +12,8 @@ public interface AdminService {
     Mono<Admin> update(String id,AdminDto adminDto);
     Mono<Void> delete(String id);
 
-    Mono<String> enabled(String id);
+    Mono<String> permit(String id);
+    Mono<String> revoke(String id);
     Flux<Admin> findAllByEnabled();
     Mono<Long> countAdminsEnabledFalse();
 

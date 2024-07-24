@@ -1,9 +1,7 @@
 package site.lawmate.admin.domain.model;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -26,10 +24,6 @@ public class Lawyer {
     String lawyerNo;
     String mid;
     Boolean auth;
-
-    @CreatedDate
-    LocalDateTime createdDate;
-
-    @LastModifiedDate
-    LocalDateTime modifiedDate;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

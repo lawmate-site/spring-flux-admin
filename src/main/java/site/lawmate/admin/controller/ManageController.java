@@ -41,9 +41,4 @@ public class ManageController {
     public Flux<LawyerStatsDto> getLawyerStats(){
         return manageService.getLawyerStats();
     }
-
-    @GetMapping("/month")
-    public Flux<LawyerStatsDto> getLawyerStatsByMonth(){
-        return manageService.getLawyerStatsByMonth();
-    }
 }
